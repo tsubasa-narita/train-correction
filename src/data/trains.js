@@ -1,0 +1,25 @@
+// ============ Train Data ============
+
+// Nose path generators
+const noseE5 = () => "M320,128 C330,128 348,128 358,130 C375,133 395,142 405,155 C412,165 415,175 415,178 C415,181 412,191 405,201 C395,214 375,222 358,225 C348,227 330,228 320,228";
+const noseE6 = () => "M320,128 C332,128 352,128 365,131 C382,135 400,145 412,158 C418,166 420,174 420,178 C420,182 418,190 412,198 C400,211 382,221 365,225 C352,228 332,228 320,228";
+const noseE7 = () => "M320,128 C335,128 355,133 368,143 C378,151 385,165 385,178 C385,191 378,205 368,213 C355,223 335,228 320,228";
+const noseN700 = () => "M320,128 C328,128 340,129 352,132 C368,137 382,148 390,162 C394,170 395,175 395,178 C395,181 394,186 390,194 C382,208 368,219 352,224 C340,227 328,228 320,228";
+const noseFlat = () => "M320,128 L332,128 Q340,128 340,138 L340,218 Q340,228 332,228 L320,228";
+const noseSteam = () => "M320,145 L355,145 Q365,145 365,155 L365,210 Q365,218 355,218 L320,218";
+const noseLinear = () => "M320,128 C335,128 355,128 375,132 C395,138 415,150 425,165 C428,170 430,175 430,178 C430,181 428,186 425,191 C415,206 395,218 375,224 C355,228 335,228 320,228";
+
+export const NOSE_FNS = { e5: noseE5, e6: noseE6, e7: noseE7, n700: noseN700, flat: noseFlat, steam: noseSteam, linear: noseLinear };
+export const NOSE_TIP_X = { e5: 413, e6: 418, e7: 383, n700: 393, flat: 338, steam: 363, linear: 428 };
+
+export const TRAINS = [
+  { id: "hayabusa", name: "はやぶさ", series: "E5けい", kind: "shinkansen", body: "#00894B", bodyLo: "#007A42", roof: "#CDCDCD", stripe1: "#E63780", stripe1W: 5, stripe1Y: 176, stripe2: "#FFFFFF", stripe2W: 3, stripe2Y: 182, nose: "#00894B", noseLo: "#006838", window: "#A8DFFF", winFrame: "#005E2B", winBg: "#003D1E", under: "#888", skirt: "#AAA", bogie: "#555", headlight: "rect", hlW: 8, hlH: 4, noseType: "e5", coupleWith: "komachi" },
+  { id: "komachi", name: "こまち", series: "E6けい", kind: "shinkansen", body: "#CC1635", bodyLo: "#AA1028", roof: "#D0D0D0", stripe1: "#C0C0C0", stripe1W: 6, stripe1Y: 175, stripe2: "#FFFFFF", stripe2W: 2, stripe2Y: 182, nose: "#CC1635", noseLo: "#991020", window: "#A8DFFF", winFrame: "#8B1520", winBg: "#5E0E15", under: "#888", skirt: "#AAA", bogie: "#555", headlight: "rect", hlW: 7, hlH: 3, noseType: "e6", coupleWith: "hayabusa" },
+  { id: "kagayaki", name: "かがやき", series: "E7けい", kind: "shinkansen", body: "#F0F0F0", bodyLo: "#E0E0E0", roof: "#1B62A0", stripe1: "#1B62A0", stripe1W: 5, stripe1Y: 174, stripe2: "#B87333", stripe2W: 4, stripe2Y: 180, nose: "#EAEAEA", noseLo: "#D8D8D8", window: "#A8DFFF", winFrame: "#155080", winBg: "#0D3050", under: "#888", skirt: "#B0B0B0", bogie: "#555", headlight: "round", hlW: 6, hlH: 5, noseType: "e7" },
+  { id: "nozomi", name: "のぞみ", series: "N700けい", kind: "shinkansen", body: "#F5F5F5", bodyLo: "#E8E8E8", roof: "#D0D0D0", stripe1: "#2266AA", stripe1W: 5, stripe1Y: 177, stripe2: null, stripe2W: 0, stripe2Y: 0, nose: "#EDEDED", noseLo: "#DCDCDC", window: "#A8DFFF", winFrame: "#1C5D8A", winBg: "#0E3555", under: "#888", skirt: "#B0B0B0", bogie: "#555", headlight: "n700", hlW: 10, hlH: 4, noseType: "n700" },
+  { id: "doctor_yellow", name: "ドクターイエロー", series: "923がた", kind: "shinkansen", body: "#FFD814", bodyLo: "#EBC400", roof: "#D8D0A0", stripe1: "#2266AA", stripe1W: 5, stripe1Y: 177, stripe2: null, stripe2W: 0, stripe2Y: 0, nose: "#F2CC00", noseLo: "#DDBB00", window: "#A8DFFF", winFrame: "#AA8800", winBg: "#775500", under: "#888", skirt: "#B0B0B0", bogie: "#555", headlight: "n700", hlW: 10, hlH: 4, noseType: "n700" },
+  { id: "yamanote", name: "やまのてせん", series: "E235けい", kind: "commuter", body: "#D8D8D8", bodyLo: "#C8C8C8", roof: "#A0A0A0", stripe1: "#8DC21F", stripe1W: 8, stripe1Y: 175, stripe2: null, stripe2W: 0, stripe2Y: 0, nose: "#D0D0D0", noseLo: "#C0C0C0", window: "#A8DFFF", winFrame: "#666", winBg: "#444", under: "#777", skirt: "#999", bogie: "#555", headlight: "rect", hlW: 12, hlH: 3, noseType: "flat" },
+  { id: "yokosuka", name: "よこすかせん", series: "E235けい", kind: "commuter", body: "#EAE6D6", bodyLo: "#DDD8C8", roof: "#999", stripe1: "#1B4D8A", stripe1W: 6, stripe1Y: 174, stripe2: "#EAE6D6", stripe2W: 3, stripe2Y: 181, nose: "#E2DED0", noseLo: "#D4D0C2", window: "#A8DFFF", winFrame: "#666", winBg: "#444", under: "#777", skirt: "#999", bogie: "#555", headlight: "rect", hlW: 12, hlH: 3, noseType: "flat" },
+  { id: "sl", name: "SLたいじゅ", series: "C11がた", kind: "steam", body: "#1A1A1A", bodyLo: "#111", roof: "#222", stripe1: "#8B0000", stripe1W: 3, stripe1Y: 195, stripe2: null, stripe2W: 0, stripe2Y: 0, nose: "#1A1A1A", noseLo: "#111", window: "#C8B878", winFrame: "#444", winBg: "#333", under: "#333", skirt: "#444", bogie: "#333", headlight: "round", hlW: 8, hlH: 8, noseType: "steam" },
+  { id: "linear", name: "リニア", series: "L0けい", kind: "shinkansen", body: "#EEF2F8", bodyLo: "#DEE6F0", roof: "#2060A0", stripe1: "#2060A0", stripe1W: 5, stripe1Y: 176, stripe2: "#55AADD", stripe2W: 3, stripe2Y: 182, nose: "#E8EEF6", noseLo: "#D0DAE8", window: "#88C8FF", winFrame: "#1B5599", winBg: "#0D3366", under: "#888", skirt: "#A0A8B0", bogie: "#555", headlight: "rect", hlW: 6, hlH: 3, noseType: "linear" },
+];
