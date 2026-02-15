@@ -290,11 +290,11 @@ const RunTrainSVG = ({ train: t, flip, svgFlip, scaleY, hideTrack }) => {
         {isModern && (
           <g opacity={0.6}>
             {/* Coupler mounting plate */}
-            <rect x={bx - 14} y={bb + 2} width={12} height={8} rx={1.5} fill="#666" />
+            <rect x={bx - 4} y={bb + 2} width={8} height={6} rx={1.5} fill="#666" />
             {/* Coupler shaft */}
-            <rect x={bx - 18} y={bb + 4} width={8} height={4} rx={1} fill="#777" />
+            <rect x={bx - 8} y={bb + 3} width={6} height={4} rx={1} fill="#777" />
             {/* Coupler knuckle */}
-            <rect x={bx - 20} y={bb + 3} width={4} height={6} rx={1} fill="#888" />
+            <rect x={bx - 10} y={bb + 3.5} width={3} height={3} rx={1} fill="#888" />
           </g>
         )}
 

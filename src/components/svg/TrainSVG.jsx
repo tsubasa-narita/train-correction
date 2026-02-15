@@ -80,6 +80,9 @@ const TrainSVG = ({ train: t, parts, animating, animProgress, stepCount, mystery
       <g style={{ opacity: hb ? 1 : 0.12, ...(hb ? bS : {}) }} filter={hb ? `url(#sd-${id})` : undefined}>
         <rect x={bx} y={by} width={bw} height={bh} rx={isSteam ? 4 : 10} fill={hb ? `url(#bg-${id})` : "#e8e8e8"} />
         <path d={nosePath} fill={hb ? c.nose : "#e0e0e0"} />
+        {/* Rear coupler bulge (non-steam only) */}
+        {hb && !isSteam && <path d={`M${bx},${by + 4} Q${bx - 12},${by + bh / 2} ${bx},${bb - 4}`} fill={c.bodyLo} />}
+        {hb && !isSteam && <circle cx={bx - 5} cy={by + bh / 2} r={5} fill={c.under} stroke={c.bodyLo} strokeWidth={1.5} />}
         {hb && <g clipPath={`url(#bc-${id})`}>
           <rect x={bx - 20} y={by} width={bw + tipX - bx + 20} height={bh} fill={`url(#hl-${id})`} />
           <rect x={bx - 20} y={t.stripe1Y} width={tipX - bx + 30} height={t.stripe1W} fill={c.stripe1} />
@@ -90,7 +93,7 @@ const TrainSVG = ({ train: t, parts, animating, animProgress, stepCount, mystery
         {hb && <g filter={mystery ? undefined : `url(#glow-${id})`}>
           <ellipse cx={isSteam ? tipX + 2 : tipX - 4} cy={isSteam ? 155 : 170} rx={t.hlW / 2} ry={t.hlH / 2} fill={c.headlight} />
         </g>}
-        {hb && !isSteam && <rect x={bx - 6} y={185} width={5} height={3} rx={1.5} fill="#E74C3C" opacity={0.7} />}
+        {hb && !isSteam && <rect x={bx - 6} y={185} width={5} height={3} rx={1.5} fill={mystery ? c.under : "#E74C3C"} opacity={0.7} />}
         {hb && <g clipPath={`url(#bc-${id})`}><rect x={bx - 20} y={bb - 6} width={bw + tipX - bx + 20} height={6} fill="rgba(0,0,0,0.08)" /></g>}
       </g>
       {/* やね */}
@@ -188,8 +191,10 @@ const TrainSVG = ({ train: t, parts, animating, animProgress, stepCount, mystery
             </g>
           ))}
       </g>
+      {/* Coupler detail at rear (non-steam) */}
       {hb && !isSteam && <g style={{ opacity: 0.6 }}>
-        <rect x={bx - 12} y={bb + 4} width={10} height={6} rx={1.5} fill={mystery ? "#999" : "#777"} />
+        <rect x={bx - 4} y={bb + 2} width={8} height={6} rx={1.5} fill={mystery ? "#999" : "#777"} />
+        <rect x={bx - 8} y={bb + 3} width={6} height={4} rx={1} fill={mystery ? "#888" : "#666"} />
       </g>}
       {mystery && hb && <g>
         <text x={200} y={by + bh / 2 + 10} textAnchor="middle" fontSize="40" fontWeight="900" fill="#fff" opacity="0.5" style={{ fontFamily: "'Zen Maru Gothic', sans-serif" }}>？</text>
