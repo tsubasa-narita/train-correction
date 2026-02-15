@@ -8,6 +8,18 @@ import PartGetBanner from "../ui/PartGetBanner";
 import RapidTapGame from "../games/RapidTapGame";
 import SwipeGame from "../games/SwipeGame";
 import HoldGame from "../games/HoldGame";
+import { FONT, COLORS, FONT_SIZE, SPACE, RADIUS } from "../../data/tokens";
+
+/* Part-type emoji map for chips */
+const PART_ICONS = {
+  "しゃりん": "🔧",
+  "せんろ": "🛤️",
+  "ボディ": "🚃",
+  "まど": "🪟",
+  "ドア": "🚪",
+  "やね": "🏗️",
+  "パンタグラフ": "⚡",
+};
 
 const CollectScreen = ({ train, settings, onReveal, onBack }) => {
   const steps = useMemo(() => {
@@ -90,9 +102,21 @@ const CollectScreen = ({ train, settings, onReveal, onBack }) => {
     if (showBanner) return <PartGetBanner label={showBanner} visible onDone={handleBannerDone} />;
     if (isBuild) return (
       <div style={{ animation: "slideUp 0.4s ease", textAlign: "center" }}>
-        <div style={{ fontSize: "2.5rem", animation: "popIn 0.5s cubic-bezier(0.34,1.56,0.64,1)" }}>🎉❓🎉</div>
-        <div style={{ fontSize: "1.4rem", fontWeight: 900, color: "#2B6CB0", letterSpacing: 2, margin: "8px 0 4px" }}>パーツが ぜんぶ そろったよ！</div>
-        <div style={{ fontSize: "1.05rem", color: "#666", marginBottom: 14 }}>どんな でんしゃが できたかな？</div>
+        <div style={{
+          fontSize: "2.8rem",
+          animation: "popIn 0.5s cubic-bezier(0.34,1.56,0.64,1)",
+          filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.1))",
+        }}>🎉❓🎉</div>
+        <div style={{
+          fontSize: "1.5rem", fontWeight: 900, color: "#2B6CB0",
+          letterSpacing: 2, margin: `${SPACE.sm}px 0 ${SPACE.xs}px`,
+          textShadow: "0 1px 4px rgba(43,108,176,0.15)",
+        }}>パーツが ぜんぶ そろったよ！</div>
+        <div style={{
+          fontSize: "1.05rem", color: "#666",
+          marginBottom: SPACE.lg,
+          textShadow: "0 1px 2px rgba(0,0,0,0.05)",
+        }}>どんな でんしゃが できたかな？</div>
         <BigButton onClick={onReveal} label="でんしゃの しょうたいは…？" emoji="❓" color="#9B59B6" pulse />
       </div>
     );
@@ -103,39 +127,119 @@ const CollectScreen = ({ train, settings, onReveal, onBack }) => {
     // default tap
     return (
       <div style={{ animation: "slideUp 0.4s ease", textAlign: "center" }} key={step}>
-        <div style={{ fontSize: "1.3rem", fontWeight: 900, color: "#5B3A1A", letterSpacing: 2, marginBottom: 4 }}>{cs.instruction}</div>
-        <div style={{ fontSize: "0.95rem", color: "#888", marginBottom: 14 }}>{cs.hint || "ボタンをおして パーツをゲット！"}</div>
+        <div style={{
+          fontSize: FONT_SIZE.lg, fontWeight: 900, color: COLORS.textBrown,
+          letterSpacing: 2, marginBottom: SPACE.xs,
+          textShadow: "0 1px 3px rgba(91,58,26,0.1)",
+        }}>{cs.instruction}</div>
+        <div style={{
+          fontSize: "0.95rem", color: "#888",
+          marginBottom: SPACE.lg,
+        }}>{cs.hint || "ボタンをおして パーツをゲット！"}</div>
         <BigButton onClick={handleStep} label={cs.label} emoji={cs.emoji} color={cs.btnColor} pulse disabled={buttonLocked} />
       </div>
     );
   };
 
   return (
-    <div style={{ minHeight: "100dvh", background: bgG, display: "flex", flexDirection: "column", alignItems: "center", fontFamily: "'Zen Maru Gothic', sans-serif", padding: "20px 16px", transition: "background 0.6s ease", position: "relative", overflow: "hidden" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-        <button onClick={onBack} style={{ background: "rgba(0,0,0,0.06)", border: "none", borderRadius: 12, padding: "6px 12px", cursor: "pointer", fontSize: "0.85rem", fontFamily: "'Zen Maru Gothic', sans-serif", fontWeight: 700, color: "#999" }}>← もどる</button>
-        <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#5B3A1A", letterSpacing: 2 }}>❓ ナゾの でんしゃ</div>
+    <div style={{
+      minHeight: "100dvh", background: bgG,
+      display: "flex", flexDirection: "column", alignItems: "center",
+      fontFamily: FONT, padding: `${SPACE.xl}px ${SPACE.lg}px`,
+      transition: "background 0.6s ease", position: "relative", overflow: "hidden",
+    }}>
+      {/* Header: back button + title */}
+      <div style={{ display: "flex", alignItems: "center", gap: SPACE.sm, marginBottom: 2 }}>
+        <button onClick={onBack} style={{
+          background: "rgba(0,0,0,0.05)",
+          backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
+          border: "1px solid rgba(0,0,0,0.06)",
+          borderRadius: RADIUS.pill,
+          padding: `${SPACE.xs + 2}px ${SPACE.lg}px`,
+          cursor: "pointer", fontSize: FONT_SIZE.sm,
+          fontFamily: FONT, fontWeight: 700, color: "#999",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+          transition: "background 0.2s ease",
+        }}>← もどる</button>
+        <div style={{
+          fontSize: "1.1rem", fontWeight: 900, color: COLORS.textBrown,
+          letterSpacing: 2,
+          textShadow: "0 1px 3px rgba(91,58,26,0.08)",
+          display: "flex", alignItems: "center", gap: SPACE.xs,
+        }}>
+          <span style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            width: 26, height: 26, borderRadius: RADIUS.pill,
+            background: "linear-gradient(135deg, #7B68EE, #6A5ACD)",
+            fontSize: "0.75rem", color: COLORS.white,
+            boxShadow: "0 2px 6px rgba(123,104,238,0.3)",
+          }}>？</span>
+          ナゾの でんしゃ
+        </div>
       </div>
+
       <ProgressDots total={steps.length} current={step + (isBuild ? 1 : 0)} />
+
+      {/* Train SVG area with workshop frame */}
       <div style={{
-        width: "100%", maxWidth: 480, margin: "4px 0",
-        transform: `translateY(${shakeY}px)`,
-        transition: shakeY === 0 ? "transform 0.1s ease-out" : "none",
-        animation: isBuild && !showBanner ? "float 2s ease-in-out infinite" : "none",
+        width: "100%", maxWidth: 480, margin: `${SPACE.xs}px 0`,
+        padding: SPACE.sm,
+        borderRadius: RADIUS.lg,
+        border: "2px dashed rgba(0,0,0,0.08)",
+        background: isBuild ? "rgba(232,244,253,0.5)" : "rgba(255,255,255,0.3)",
+        boxShadow: isBuild
+          ? "0 0 20px rgba(43,108,176,0.1), inset 0 0 20px rgba(255,255,255,0.5)"
+          : "inset 0 0 16px rgba(255,255,255,0.3)",
+        transition: "all 0.6s ease",
+        position: "relative",
       }}>
-        <TrainSVG train={train} parts={parts} animating={animating} animProgress={animProgress} stepCount={settings.stepCount} mystery />
+        <div style={{
+          transform: `translateY(${shakeY}px)`,
+          transition: shakeY === 0 ? "transform 0.1s ease-out" : "none",
+          animation: isBuild && !showBanner ? "float 2s ease-in-out infinite" : "none",
+        }}>
+          <TrainSVG train={train} parts={parts} animating={animating} animProgress={animProgress} stepCount={settings.stepCount} mystery />
+        </div>
       </div>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", margin: "6px 0" }}>
-        {steps.map((s) => (
-          <div key={s.id} style={{
-            padding: "5px 12px", borderRadius: 14,
-            background: parts.includes(s.partName) ? "linear-gradient(135deg,#FFE066,#FF9F43)" : "rgba(0,0,0,0.05)",
-            color: parts.includes(s.partName) ? "#7B3F00" : "#bbb",
-            fontSize: "0.8rem", fontWeight: 700, transition: "all 0.4s",
-          }}>{parts.includes(s.partName) ? `✓ ${s.partName}` : `? ${s.partName}`}</div>
-        ))}
+
+      {/* Part chips with icons */}
+      <div style={{
+        display: "flex", gap: SPACE.xs + 2, flexWrap: "wrap",
+        justifyContent: "center", margin: `${SPACE.xs + 2}px 0`,
+      }}>
+        {steps.map((s) => {
+          const done = parts.includes(s.partName);
+          const icon = PART_ICONS[s.partName] || "🔩";
+          return (
+            <div key={s.id} style={{
+              padding: `${SPACE.xs + 1}px ${SPACE.md}px`,
+              borderRadius: RADIUS.lg,
+              background: done
+                ? `linear-gradient(135deg,${COLORS.gold},#FF9F43)`
+                : "rgba(0,0,0,0.04)",
+              color: done ? "#7B3F00" : "#bbb",
+              fontSize: FONT_SIZE.sm, fontWeight: 700,
+              transition: "all 0.4s ease",
+              boxShadow: done
+                ? "0 2px 8px rgba(255,224,102,0.35), inset 0 1px 0 rgba(255,255,255,0.3)"
+                : "none",
+              display: "flex", alignItems: "center", gap: SPACE.xs,
+              border: done ? "1px solid rgba(255,159,67,0.3)" : "1px solid transparent",
+            }}>
+              <span style={{ fontSize: "0.75rem" }}>{done ? icon : "?"}</span>
+              {s.partName}
+              {done && <span style={{ fontSize: "0.7rem", opacity: 0.7 }}>✓</span>}
+            </div>
+          );
+        })}
       </div>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, marginTop: 8 }}>
+
+      {/* Interaction area */}
+      <div style={{
+        flex: 1, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        gap: SPACE.lg, marginTop: SPACE.sm,
+      }}>
         {renderInteraction()}
       </div>
     </div>
