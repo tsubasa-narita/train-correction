@@ -9,7 +9,7 @@ import RapidTapGame from "../games/RapidTapGame";
 import SwipeGame from "../games/SwipeGame";
 import HoldGame from "../games/HoldGame";
 
-const CollectScreen = ({ train, settings, onRun, onBack }) => {
+const CollectScreen = ({ train, settings, onReveal, onBack }) => {
   const steps = useMemo(() => {
     let s = getSteps(settings.stepCount);
     if (train.kind === "steam") s = s.filter((st) => st.partName !== "パンタグラフ");
@@ -90,10 +90,10 @@ const CollectScreen = ({ train, settings, onRun, onBack }) => {
     if (showBanner) return <PartGetBanner label={showBanner} visible onDone={handleBannerDone} />;
     if (isBuild) return (
       <div style={{ animation: "slideUp 0.4s ease", textAlign: "center" }}>
-        <div style={{ fontSize: "2.5rem", animation: "popIn 0.5s cubic-bezier(0.34,1.56,0.64,1)" }}>{`🎉${train.kind === "steam" ? "🚂" : "🚄"}🎉`}</div>
+        <div style={{ fontSize: "2.5rem", animation: "popIn 0.5s cubic-bezier(0.34,1.56,0.64,1)" }}>🎉❓🎉</div>
         <div style={{ fontSize: "1.4rem", fontWeight: 900, color: "#2B6CB0", letterSpacing: 2, margin: "8px 0 4px" }}>パーツが ぜんぶ そろったよ！</div>
-        <div style={{ fontSize: "1.05rem", color: "#666", marginBottom: 14 }}>{train.name}を はしらせよう！</div>
-        <BigButton onClick={onRun} label="しゅっぱつ しんこう！" emoji={train.kind === "steam" ? "🚂" : "🚄"} color="#E5253C" pulse />
+        <div style={{ fontSize: "1.05rem", color: "#666", marginBottom: 14 }}>どんな でんしゃが できたかな？</div>
+        <BigButton onClick={onReveal} label="でんしゃの しょうたいは…？" emoji="❓" color="#9B59B6" pulse />
       </div>
     );
     const itype = cs.interact || "tap";
@@ -114,7 +114,7 @@ const CollectScreen = ({ train, settings, onRun, onBack }) => {
     <div style={{ minHeight: "100dvh", background: bgG, display: "flex", flexDirection: "column", alignItems: "center", fontFamily: "'Zen Maru Gothic', sans-serif", padding: "20px 16px", transition: "background 0.6s ease", position: "relative", overflow: "hidden" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
         <button onClick={onBack} style={{ background: "rgba(0,0,0,0.06)", border: "none", borderRadius: 12, padding: "6px 12px", cursor: "pointer", fontSize: "0.85rem", fontFamily: "'Zen Maru Gothic', sans-serif", fontWeight: 700, color: "#999" }}>← もどる</button>
-        <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#5B3A1A", letterSpacing: 2 }}>{train.kind === "steam" ? "🚂" : "🚄"} {train.name}</div>
+        <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#5B3A1A", letterSpacing: 2 }}>❓ ナゾの でんしゃ</div>
       </div>
       <ProgressDots total={steps.length} current={step + (isBuild ? 1 : 0)} />
       <div style={{
@@ -123,7 +123,7 @@ const CollectScreen = ({ train, settings, onRun, onBack }) => {
         transition: shakeY === 0 ? "transform 0.1s ease-out" : "none",
         animation: isBuild && !showBanner ? "float 2s ease-in-out infinite" : "none",
       }}>
-        <TrainSVG train={train} parts={parts} animating={animating} animProgress={animProgress} stepCount={settings.stepCount} />
+        <TrainSVG train={train} parts={parts} animating={animating} animProgress={animProgress} stepCount={settings.stepCount} mystery />
       </div>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", margin: "6px 0" }}>
         {steps.map((s) => (
