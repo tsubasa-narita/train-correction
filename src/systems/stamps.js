@@ -1,3 +1,20 @@
+// ============ Storage abstraction (window.storage or localStorage fallback) ============
+
+const storageGet = (key) => {
+  if (window.storage && typeof window.storage.get === "function") {
+    return window.storage.get(key).then((result) => result ? result.value : null);
+  }
+  return Promise.resolve(localStorage.getItem(key));
+};
+
+const storageSet = (key, value) => {
+  if (window.storage && typeof window.storage.set === "function") {
+    return window.storage.set(key, value);
+  }
+  localStorage.setItem(key, value);
+  return Promise.resolve();
+};
+
 // ============ Stamp Card Storage ============
 
 const STAMP_KEY = "ouchi-stamps";
@@ -10,8 +27,8 @@ export const todayStr = () => {
 
 export const loadStamps = (callback) => {
   try {
-    window.storage.get(STAMP_KEY).then((result) => {
-      callback(result ? JSON.parse(result.value) : []);
+    storageGet(STAMP_KEY).then((val) => {
+      callback(val ? JSON.parse(val) : []);
     }).catch(() => { callback([]); });
   } catch (e) { callback([]); }
 };
@@ -27,7 +44,7 @@ export const saveStamp = (trainId, callback) => {
     const cutStr = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, "0")}-${String(cutoff.getDate()).padStart(2, "0")}`;
     stamps = stamps.filter((s) => s.date >= cutStr);
     try {
-      window.storage.set(STAMP_KEY, JSON.stringify(stamps)).then(() => {
+      storageSet(STAMP_KEY, JSON.stringify(stamps)).then(() => {
         if (callback) callback(stamps);
       }).catch(() => { if (callback) callback(stamps); });
     } catch (e) { if (callback) callback(stamps); }
@@ -38,8 +55,8 @@ export const saveStamp = (trainId, callback) => {
 
 export const loadCollection = (callback) => {
   try {
-    window.storage.get(COLLECTION_KEY).then((result) => {
-      callback(result ? JSON.parse(result.value) : []);
+    storageGet(COLLECTION_KEY).then((val) => {
+      callback(val ? JSON.parse(val) : []);
     }).catch(() => { callback([]); });
   } catch (e) { callback([]); }
 };
@@ -54,7 +71,7 @@ export const saveCollection = (trainId, callback) => {
       col.push({ trainId, firstGetDate: todayStr(), lastDate: todayStr(), count: 1 });
     }
     try {
-      window.storage.set(COLLECTION_KEY, JSON.stringify(col)).then(() => {
+      storageSet(COLLECTION_KEY, JSON.stringify(col)).then(() => {
         if (callback) callback(col);
       }).catch(() => { if (callback) callback(col); });
     } catch (e) { if (callback) callback(col); }
