@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TRAINS } from "./data/trains";
 import { DEFAULT_SETTINGS } from "./data/gameSteps";
 import { SFX } from "./systems/sound";
-import { saveStamp } from "./systems/stamps";
-import DepotSelector from "./components/screens/DepotSelector";
-import CouplingDialog from "./components/screens/CouplingDialog";
+import { saveStamp, saveCollection, loadCollection } from "./systems/stamps";
+import HomeScreen from "./components/screens/HomeScreen";
 import CollectScreen from "./components/screens/CollectScreen";
+import RevealScreen from "./components/screens/RevealScreen";
 import DepartureScreen from "./components/screens/DepartureScreen";
 import RunningScreen from "./components/screens/RunningScreen";
 import ArrivalSequence from "./components/screens/ArrivalSequence";
@@ -13,33 +13,66 @@ import RewardScreen from "./components/screens/RewardScreen";
 import StampCard from "./components/screens/StampCard";
 import SettingsModal from "./components/screens/SettingsModal";
 
+// Pick a random train, weighted toward uncollected ones
+const pickRandomTrain = (collection) => {
+  const colSet = new Set(collection.map((c) => c.trainId));
+  const uncollected = TRAINS.filter((t) => !colSet.has(t.id));
+  // If all collected, pick from any
+  const pool = uncollected.length > 0 ? uncollected : TRAINS;
+  return pool[Math.floor(Math.random() * pool.length)];
+};
+
 // ============ Main App ============
 export default function OuchiTrainApp() {
   const [train, setTrain] = useState(null);
-  const [phase, setPhase] = useState("select");
+  const [phase, setPhase] = useState("home");
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [showSettings, setShowSettings] = useState(false);
   const [coupled, setCoupled] = useState(false);
   const [coupledTrain, setCoupledTrain] = useState(null);
+  const [isNewCollect, setIsNewCollect] = useState(false);
+  const [collectCount, setCollectCount] = useState(0);
 
-  const handleSelect = (t) => {
-    setTrain(t);
-    if (t.coupleWith) setPhase("askCouple");
-    else { setCoupled(false); setCoupledTrain(null); setPhase("collect"); }
-  };
+  const handleStart = useCallback(() => {
+    loadCollection((col) => {
+      const picked = pickRandomTrain(col);
+      setTrain(picked);
+      // Handle coupling automatically
+      if (picked.coupleWith) {
+        setCoupled(true);
+        setCoupledTrain(TRAINS.find((t2) => t2.id === picked.coupleWith));
+      } else {
+        setCoupled(false);
+        setCoupledTrain(null);
+      }
+      setPhase("collect");
+    });
+  }, []);
 
-  const handleCouple = (yes) => {
-    if (yes) { setCoupled(true); setCoupledTrain(TRAINS.find((t2) => t2.id === train.coupleWith)); }
-    else { setCoupled(false); setCoupledTrain(null); }
-    setPhase("collect");
-  };
+  const handleReveal = useCallback(() => { setPhase("reveal"); }, []);
+  const handleDepart = useCallback(() => { setPhase("depart"); }, []);
 
-  const handleReset = () => { setTrain(null); setCoupled(false); setCoupledTrain(null); setPhase("select"); };
+  const handleReset = useCallback(() => {
+    setTrain(null);
+    setCoupled(false);
+    setCoupledTrain(null);
+    setIsNewCollect(false);
+    setCollectCount(0);
+    setPhase("home");
+  }, []);
 
-  const handleReward = () => {
-    if (train) saveStamp(train.id, () => { SFX.stamp(); });
-    setPhase("reward");
-  };
+  const handleReward = useCallback(() => {
+    if (train) {
+      saveStamp(train.id);
+      saveCollection(train.id, (col) => {
+        const entry = col.find((c) => c.trainId === train.id);
+        setIsNewCollect(entry ? entry.count === 1 : true);
+        setCollectCount(entry ? entry.count : 1);
+        SFX.stamp();
+        setPhase("reward");
+      });
+    }
+  }, [train]);
 
   return (
     <div>
@@ -69,14 +102,14 @@ export default function OuchiTrainApp() {
         "@keyframes coupleSlideLeft{0%{transform:translateX(40px);}100%{transform:translateX(calc(-50% + 10px));}}",
         "@keyframes coupleFlash{0%{transform:translate(-50%,-50%) scale(1);opacity:1;}100%{transform:translate(-50%,-50%) scale(3);opacity:0;}}",
       ].join("\n")}</style>
-      {phase === "select" && <DepotSelector onSelect={handleSelect} onOpenSettings={() => { setShowSettings(true); }} onStamps={() => { setPhase("stamps"); }} />}
-      {phase === "stamps" && <StampCard onBack={() => { setPhase("select"); }} />}
-      {phase === "askCouple" && train && <CouplingDialog train={train} onYes={() => { handleCouple(true); }} onNo={() => { handleCouple(false); }} />}
-      {phase === "collect" && train && <CollectScreen train={train} settings={settings} onRun={() => { setPhase("depart"); }} onBack={handleReset} />}
+      {phase === "home" && <HomeScreen onStart={handleStart} onOpenSettings={() => { setShowSettings(true); }} onCollection={() => { setPhase("collection"); }} />}
+      {phase === "collection" && <StampCard onBack={() => { setPhase("home"); }} />}
+      {phase === "collect" && train && <CollectScreen train={train} settings={settings} onReveal={handleReveal} onBack={handleReset} />}
+      {phase === "reveal" && train && <RevealScreen train={train} settings={settings} onDepart={handleDepart} />}
       {phase === "depart" && train && <DepartureScreen train={train} coupled={coupled} coupledTrain={coupledTrain} onDepart={() => { setPhase("run"); }} />}
       {phase === "run" && train && <RunningScreen train={train} settings={settings} coupled={coupled} coupledTrain={coupledTrain} onGoReward={() => { setPhase("arrive"); }} />}
       {phase === "arrive" && train && <ArrivalSequence stationName={settings.stationName} train={train} onGoReward={handleReward} />}
-      {phase === "reward" && train && <RewardScreen trainName={train.name} onReset={handleReset} />}
+      {phase === "reward" && train && <RewardScreen train={train} isNewCollect={isNewCollect} collectCount={collectCount} onReset={handleReset} />}
       {showSettings && <SettingsModal settings={settings} onChange={setSettings} onClose={() => { setShowSettings(false); }} />}
     </div>
   );

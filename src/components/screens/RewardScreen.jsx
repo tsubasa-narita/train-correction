@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import ParticleBurst from "../ui/ParticleBurst";
+import DepotTrainSVG from "../svg/DepotTrainSVG";
 
-const RewardScreen = ({ trainName, onReset }) => {
+const RewardScreen = ({ train, isNewCollect, collectCount, onReset }) => {
   const [sel, setSel] = useState(null);
   const [show, setShow] = useState(false);
+  const [collectShown, setCollectShown] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => { setShow(true); }, 500);
-    return () => { clearTimeout(t); };
+    const t1 = setTimeout(() => { setCollectShown(true); }, 600);
+    const t2 = setTimeout(() => { setShow(true); }, 2200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   const rewards = [
@@ -19,7 +22,29 @@ const RewardScreen = ({ trainName, onReset }) => {
   return (
     <div style={{ minHeight: "100dvh", background: "linear-gradient(180deg,#FFF8E1 0%,#FFECB3 50%,#FFE082 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "'Zen Maru Gothic', sans-serif", padding: 20 }}>
       <div style={{ fontSize: "1.3rem", fontWeight: 900, color: "#5B3A1A", letterSpacing: 3, marginBottom: 6, animation: "fadeIn 0.5s ease" }}>🏠 おうちに ついたよ！</div>
-      <div style={{ fontSize: "0.95rem", color: "#888", marginBottom: 20 }}>{trainName}の たびは たのしかったね！</div>
+      <div style={{ fontSize: "0.95rem", color: "#888", marginBottom: 12 }}>{train.name}の たびは たのしかったね！</div>
+
+      {/* Collection registration */}
+      {collectShown && (
+        <div style={{ background: "rgba(255,255,255,0.7)", borderRadius: 20, padding: "14px 24px", marginBottom: 16, textAlign: "center", animation: "popIn 0.5s cubic-bezier(0.34,1.56,0.64,1)", position: "relative" }}>
+          {isNewCollect && <ParticleBurst />}
+          <div style={{ width: 140, height: 52, margin: "0 auto 8px" }}>
+            <DepotTrainSVG train={train} />
+          </div>
+          {isNewCollect ? (
+            <>
+              <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#E5253C", letterSpacing: 2 }}>あたらしい でんしゃ ゲット！</div>
+              <div style={{ fontSize: "0.85rem", color: "#888", marginTop: 2 }}>コレクションに ついか されたよ</div>
+            </>
+          ) : (
+            <>
+              <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#2B6CB0", letterSpacing: 2 }}>{collectCount}かいめの {train.name}！</div>
+              <div style={{ fontSize: "0.85rem", color: "#888", marginTop: 2 }}>またあえて うれしいね</div>
+            </>
+          )}
+        </div>
+      )}
+
       {show && !sel && <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
         <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#7B3F00", letterSpacing: 2, marginBottom: 4, animation: "slideUp 0.4s ease" }}>つぎは なにする？</div>
         <div style={{ display: "flex", gap: 12 }}>

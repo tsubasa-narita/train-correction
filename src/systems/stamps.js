@@ -1,6 +1,7 @@
 // ============ Stamp Card Storage ============
 
 const STAMP_KEY = "ouchi-stamps";
+const COLLECTION_KEY = "ouchi-collection";
 
 export const todayStr = () => {
   const d = new Date();
@@ -30,5 +31,32 @@ export const saveStamp = (trainId, callback) => {
         if (callback) callback(stamps);
       }).catch(() => { if (callback) callback(stamps); });
     } catch (e) { if (callback) callback(stamps); }
+  });
+};
+
+// ============ Collection Storage ============
+
+export const loadCollection = (callback) => {
+  try {
+    window.storage.get(COLLECTION_KEY).then((result) => {
+      callback(result ? JSON.parse(result.value) : []);
+    }).catch(() => { callback([]); });
+  } catch (e) { callback([]); }
+};
+
+export const saveCollection = (trainId, callback) => {
+  loadCollection((col) => {
+    const existing = col.find((c) => c.trainId === trainId);
+    if (existing) {
+      existing.count += 1;
+      existing.lastDate = todayStr();
+    } else {
+      col.push({ trainId, firstGetDate: todayStr(), lastDate: todayStr(), count: 1 });
+    }
+    try {
+      window.storage.set(COLLECTION_KEY, JSON.stringify(col)).then(() => {
+        if (callback) callback(col);
+      }).catch(() => { if (callback) callback(col); });
+    } catch (e) { if (callback) callback(col); }
   });
 };
